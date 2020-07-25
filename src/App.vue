@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Hello Medium"/> -->
     <Tree class="tree" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
   </div>
