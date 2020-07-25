@@ -1,10 +1,9 @@
-export default class FileTree {
+export default class Tree {
   constructor (data, delimeter, sort = null) {
     var that = this
-    this.tree = []
+    this.treeObject = []
     this.delimiter = delimeter
     this.sort = sort
-    console.log('Data:', data)
     data.map(function (path) {
       that.placeNodeInTree(path)
     })
@@ -14,7 +13,7 @@ export default class FileTree {
     return {
       name: name,
       isFolder: isFolder,
-      sub_contents: [],
+      contents: [],
       expanded: false,
       path: path
     }
@@ -22,11 +21,17 @@ export default class FileTree {
 
   appendNode (name, target, path, isFolder) {
     var newNode = this.initializeNode(name, isFolder, path)
-    const log = JSON.stringify(newNode)
-    console.log('New Node: ', log)
     target.push(newNode)
     if (this.sort instanceof Function) {
       target.sort(this.sort)
+    }
+  }
+
+  removeNode (path) {
+    var pathStack = path.split('/')
+    var searchResult = this.searchTree(pathStack, this.treeObject)
+    if (searchResult.found) {
+      searchResult.targetList.splice(searchResult.index, 1)
     }
   }
 
@@ -44,7 +49,7 @@ export default class FileTree {
               path.shift()
               return this.searchTree(
                 path,
-                searchList[i].sub_contents,
+                searchList[i].contents,
                 action
               )
             }
@@ -60,7 +65,7 @@ export default class FileTree {
     console.log('Path', pathArray)
     for (var i = 0; i < pathArray.length; i++) {
       var targetPath = pathArray.slice(0, i + 1)
-      var searchResult = this.searchTree(targetPath, this.tree)
+      var searchResult = this.searchTree(targetPath, this.treeObject)
       const log = JSON.stringify(searchResult)
       console.log('TargetPath', targetPath, 'Search Result', log)
       if (!searchResult.found) {
@@ -78,7 +83,7 @@ export default class FileTree {
 
   removeNodeFromTree (path) {
     var pathArray = path.split(this.delimiter)
-    var searchResult = this.searchTree(pathArray, this.tree)
+    var searchResult = this.searchTree(pathArray, this.treeObject)
     if (searchResult) {
       searchResult.targetList.splice(searchResult.index, 1)
     }
@@ -89,7 +94,7 @@ export default class FileTree {
       if (searchList.length !== 0) {
         for (var i = 0; i < searchList.length; i++) {
           data = this.traverseTree(
-            searchList[i].sub_contents,
+            searchList[i].contents,
             action,
             data,
             key

@@ -1,20 +1,18 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Hello Medium"/>
-    <file-tree :treeData='treeData' delimeter='/'/>
+    <!-- <HelloWorld msg="Hello Medium"/> -->
+    <Tree class="tree" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import FileTree from './components/file-tree.vue'
-
+// import HelloWorld from './components/HelloWorld.vue'
+import Tree from './components/tree-component/src/tree.vue'
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    FileTree
+    Tree
   },
   data: function () {
     return {
@@ -32,5 +30,11 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.tree{
+   color: black;
+   border:2px solid black;
+   font-size: 25px;
+
 }
 </style>
