@@ -1,5 +1,5 @@
 <template>
-  <div class="tree-wrapper">
+  <div class ="wrapper">
     <div class= "tree-title">
       {{title}}
     </div>
@@ -67,7 +67,20 @@ $text-color: black;
 $background-color: white;
 $border:2px solid $text-color;
 $font-size: 25px;
-.tree-wrapper{
+.tree{
+  border: none;
+  order: 1;
+  align-self: flex-start;
+}
+.tree-title{
+  width: 100%;
+  height: 10%;
+  order: 1;
+  font-size: larger;
+}
+.wrapper{
   display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
 }
 </style>

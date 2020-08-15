@@ -2,7 +2,7 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Hello Medium"/> -->
-    <Tree class="tree" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
+    <Tree class="tree-wrapper" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
   </div>
 </template>
 
@@ -31,7 +31,7 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-.tree{
+.tree-wrapper{
    color: black;
    border:2px solid black;
    font-size: 25px;
