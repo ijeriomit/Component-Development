@@ -1,14 +1,15 @@
 <template>
     <li>
-        <div class="node-title">
-          <font-awesome-icon v-if="node.contents!=[]" :icon="icon(node.expanded)" />
+        <div class="node-title" @click="$emit('node-clicked', node)">
+          <font-awesome-icon v-if="node.contents.length !== 0" :icon="icon(node.expanded)" />
           <font-awesome-icon v-else :icon="['fa', 'file']" />
           <div>
               {{node.name}}
           </div>
         </div>
-        <ul v-if="node.contents" :class='{expanded: node.expanded}' >
-            <node v-for='node in node.contents' :key='node.name'  :node='node'>
+        <ul v-if="node.contents" :class='{expanded: node.expanded}' class="folder" >
+            <node @node-clicked="$emit('node-clicked', $event)"
+        @node-deleted="$emit('node-deleted', $event)" v-for='node in node.contents' :key='node.name'  :node='node'>
             </node>
         </ul>
     </li>
@@ -21,6 +22,9 @@ export default {
   props: {
     node: { type: Object, required: true },
     deletable: { type: Boolean, required: false }
+  },
+  mounted: function () {
+    console.log(this.node)
   },
   methods: {
     icon: function (expanded) {
@@ -36,17 +40,27 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 li {
   list-style: none;
+  padding-top: 3.5%;
+  padding-bottom: 3.5%;
 }
 .node-title{
  display: flex;
  flex-direction: row;
  justify-content: flex-start;
  align-items: center;
+  div{
+    padding-left: 2.5px;
+    padding-right: 2.5px;
+  }
+  svg{
+    padding-right: 2.5px;
+  }
+
 }
-.expanded{
+.expanded.folder{
   height: fit-content;
 }
 .folder{

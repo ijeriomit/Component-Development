@@ -66,8 +66,8 @@ export default class Tree {
     for (var i = 0; i < pathArray.length; i++) {
       var targetPath = pathArray.slice(0, i + 1)
       var searchResult = this.searchTree(targetPath, this.treeObject)
-      const log = JSON.stringify(searchResult)
-      console.log('TargetPath', targetPath, 'Search Result', log)
+      // const log = JSON.stringify(searchResult)
+      // console.log('TargetPath', targetPath, 'Search Result', log)
       if (!searchResult.found) {
         var nodeName = pathArray[i]
         var nodePath = pathArray.slice(0, i).join(this.delimiter)

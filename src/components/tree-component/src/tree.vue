@@ -4,8 +4,8 @@
       {{title}}
     </div>
     <ul class="tree">
-      <node @nodeClicked="clickedNode"
-        @nodeDeleted="deleteNode"
+      <node @node-clicked="clickedNode"
+        @node-deleted="deleteNode"
         v-for='node in tree.treeObject'
         :key='node.name' :class='{expanded: node.expanded}'
         :node='node'
@@ -23,6 +23,7 @@ export default {
   name: 'tree',
   created: function () {
     library.add(faFolder, faFolderOpen, faFile)
+    this.tree = new Tree(this.treeData, this.delimeter)
   },
   props: {
     treeData: { type: Array, required: true },
@@ -51,18 +52,16 @@ export default {
     },
     clickedNode: function (node) {
       node.expanded = !node.expanded
+      console.log('Node Clicked: ', node.name)
       if (this.onClickFunction instanceof Function) {
         this.onClickFunction(node.name)
       }
     }
 
-  },
-  mounted: function () {
-    this.tree = new Tree(this.treeData, this.delimeter)
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 $text-color: black;
 $background-color: white;
 $border:2px solid $text-color;
@@ -71,16 +70,35 @@ $font-size: 25px;
   border: none;
   order: 1;
   align-self: flex-start;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 .tree-title{
   width: 100%;
-  height: 10%;
+  height: fit-content;
   order: 1;
+  text-align: center;
   font-size: larger;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: inherit;
 }
 .wrapper{
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
+  color: black;
+  border: 2px solid black;
+  font-size: 25px;
+  width: max-content;
+}
+.expanded{
+  height: fit-content;
+}
+.folder{
+  transition: all 0.3s ease-in-out;
+  height: 0px;
+  overflow: hidden;
 }
 </style>

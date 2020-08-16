@@ -16,7 +16,7 @@ export default {
   },
   data: function () {
     return {
-      treeData: ['dir1/subdir1/file1', 'dir2/subdir2/file2']
+      treeData: ['dir1/subdir1/subsubdir1/subsubsubdir1/file_1', 'dir2/subdir2/subsubdir2/subsubsubdir2/file_2']
     }
   }
 }
@@ -32,9 +32,9 @@ export default {
   margin-top: 60px;
 }
 .tree-wrapper{
-   color: black;
-   border:2px solid black;
-   font-size: 25px;
-
+  color: black;
+  border: 2px solid black;
+  font-size: 25px;
+  width: max-content;
 }
 </style>
