@@ -1,14 +1,14 @@
 <template>
-    <li>
-        <div class="node-title" @click="$emit('node-clicked', node)">
+    <li >
+        <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node', node)" class="node-title" :id="node.path"  @click="$emit('node-clicked', node)">
           <font-awesome-icon v-if="node.contents.length !== 0" :icon="icon(node.expanded)" />
-          <font-awesome-icon v-else :icon="['fa', 'file']" />
+          <font-awesome-icon v-else :icon="['fa', 'file']" style="padding-left: 10px;"/>
           <div>
               {{node.name}}
           </div>
         </div>
         <ul v-if="node.contents" :class='{expanded: node.expanded}' class="folder" >
-            <node @node-clicked="$emit('node-clicked', $event)"
+            <node @node-hovered="$emit('node-hovered', $event)" @hovered-off-node="$emit('hovered-off-node', $event)" @node-clicked="$emit('node-clicked', $event)"
         @node-deleted="$emit('node-deleted', $event)" v-for='node in node.contents' :key='node.name'  :node='node'>
             </node>
         </ul>
@@ -46,6 +46,11 @@ li {
   padding-top: 3.5%;
   padding-bottom: 3.5%;
 }
+.selected{
+  background-color: orange;
+  // border-radius: 10px;
+  // box-shadow: -3px -3px;
+}
 .node-title{
  display: flex;
  flex-direction: row;
@@ -57,6 +62,7 @@ li {
   }
   svg{
     padding-right: 2.5px;
+    padding-left: 10px;
   }
 
 }

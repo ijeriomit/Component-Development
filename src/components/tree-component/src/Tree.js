@@ -10,10 +10,12 @@ export default class Tree {
   }
 
   initializeNode (name, isFolder, path) {
+    console.log('Node: ', name, ' Path: ', path)
     return {
       name: name,
       isFolder: isFolder,
       contents: [],
+      selected: false,
       expanded: false,
       path: path
     }
@@ -62,16 +64,16 @@ export default class Tree {
 
   placeNodeInTree (path) {
     var pathArray = path.split(this.delimiter)
-    console.log('Path', pathArray)
+    // console.log('Path', pathArray)
     for (var i = 0; i < pathArray.length; i++) {
       var targetPath = pathArray.slice(0, i + 1)
       var searchResult = this.searchTree(targetPath, this.treeObject)
-      // const log = JSON.stringify(searchResult)
-      // console.log('TargetPath', targetPath, 'Search Result', log)
       if (!searchResult.found) {
         var nodeName = pathArray[i]
-        var nodePath = pathArray.slice(0, i).join(this.delimiter)
-        console.log('Appending Node', nodeName, nodePath)
+        var nodePath = '/' + pathArray.slice(0, i).join(this.delimiter) + '/' + nodeName
+        if (i === 0) {
+          nodePath = '/' + nodeName
+        }
         var isFolder = true
         if (i === pathArray.length - 1) {
           isFolder = false
