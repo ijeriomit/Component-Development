@@ -1,15 +1,19 @@
 <template>
     <li >
-        <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node', node)" class="node-title" :id="node.path"  @click="$emit('node-clicked', node)">
-          <font-awesome-icon v-if="node.contents.length !== 0" :icon="icon(node.expanded)" />
+        <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node', node)" class="node-title" :id="node.path+ '/'+ node.name"  @click="$emit('node-clicked', node)">
+          <div class="side-branch-icon-wrapper">
+            <div class="side-branch-icon">
+            </div>
+        </div>
+          <font-awesome-icon v-if="node.isFolder" :icon="icon(node.expanded)" />
           <font-awesome-icon v-else :icon="['fa', 'file']" style="padding-left: 10px;"/>
-          <div>
+          <div class="name">
               {{node.name}}
           </div>
         </div>
         <ul v-if="node.contents" :class='{expanded: node.expanded}' class="folder" >
             <node @node-hovered="$emit('node-hovered', $event)" @hovered-off-node="$emit('hovered-off-node', $event)" @node-clicked="$emit('node-clicked', $event)"
-        @node-deleted="$emit('node-deleted', $event)" v-for='node in node.contents' :key='node.name'  :node='node'>
+         v-for='node in node.contents' :key='node.name'  :node='node'>
             </node>
         </ul>
     </li>
@@ -48,21 +52,33 @@ li {
 }
 .selected{
   background-color: orange;
-  // border-radius: 10px;
-  // box-shadow: -3px -3px;
 }
 .node-title{
  display: flex;
  flex-direction: row;
  justify-content: flex-start;
  align-items: center;
-  div{
+ cursor: pointer;
+
+  .side-branch-icon-wrapper{
+    order: 1;
+    width: 20px;
+    height: 25px;
+    .side-branch-icon{
+      height: 50%;
+      border-bottom: 2px solid black;
+      border-left: 2px solid black;
+    }
+  }
+  .name{
+    order: 3;
     padding-left: 2.5px;
     padding-right: 2.5px;
   }
   svg{
+    order: 2;
     padding-right: 2.5px;
-    padding-left: 10px;
+    padding-left: 2.5px;
   }
 
 }

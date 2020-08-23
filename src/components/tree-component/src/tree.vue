@@ -4,10 +4,12 @@
       {{title}}
     </div>
     <div class="highlight" ref="hoverHighlight" ></div>
-    <div class="highlight" ref="highlight"></div>
+    <div class="highlight" ref="highlight">
+    </div>
+    <font-awesome-icon style="width: 40px;" ref="deleteButton" @click="deleteNode" class="delete-icon" :icon="['fa', 'trash-alt']"/>
+
     <ul class="tree" ref="tree">
       <node @node-clicked="clickedNode"
-        @node-deleted="deleteNode"
         @node-hovered="positionHighlight($refs.hoverHighlight, $event)"
         @hovered-off-node ="hideHighLight($refs.hoverHighlight, $event)"
         v-for='node in tree.treeObject'
@@ -22,11 +24,13 @@
 import Tree from './Tree'
 import node from './node'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFolder, faFolderOpen, faFile } from '@fortawesome/free-solid-svg-icons'
+import { faFolder, faFolderOpen, faFile, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 export default {
   name: 'tree',
   created: function () {
-    library.add(faFolder, faFolderOpen, faFile)
+    library.add(faFolder, faFolderOpen, faFile, faTrashAlt)
     this.tree = new Tree(this.treeData, this.delimeter)
   },
   props: {
@@ -40,40 +44,50 @@ export default {
     onDeleteFunction: { type: Function, required: false }
   },
   components: {
-    node
+    node,
+    FontAwesomeIcon
   },
   data: function () {
     return {
-      selectedFile: null,
+      selectedNode: null,
       tree: null
     }
   },
   methods: {
-    deleteNode: function (node) {
-      this.tree.removeNodeFromTree(node)
+    deleteNode: function () {
+      console.log('deleted file', this.selectedNode)
+      var path = ''
+      if (this.selectedNode.path === '') {
+        path = this.selectedNode.name
+      } else {
+        path = this.selectedNode.path + '/' + this.selectedNode.name
+      }
+      this.tree.removeNodeFromTree(path)
+      this.hideDeleteIcon()
+      this.hideHighLight(this.$refs.highlight)
       if (this.onDeleteFunction instanceof Function) {
         this.onDeleteFunction(node.name)
       }
     },
-    fileClicked: function (node) {
-      if (this.selectedFile != null) {
-        this.selectedFile.selected = false
-      }
-      this.selectedFile = node
-      this.selectedFile.selected = true
-    },
     clickedNode: function (node) {
       node.expanded = !node.expanded
-      if (!node.isFolder) {
-        this.fileClicked(node)
-      }
+      this.selectedNode = node
       this.positionHighlight(this.$refs.highlight, node, true)
-      if (this.onClickFunction instanceof Function) {
-        this.onClickFunction(node.name)
+      this.positionDeleteButton(node)
+      if (!node.isFolder && this.onClickFunction instanceof Function) {
+        this.onClickFunction(node.path)
       }
     },
+    positionDeleteButton: function (node) {
+      var elem = document.getElementById(node.path + '/' + node.name)
+      this.hideDeleteIcon()
+      this.$refs.deleteButton.style.top = elem.getBoundingClientRect().top + 'px'
+      this.$refs.deleteButton.style.bottom = elem.getBoundingClientRect().bottom + 'px'
+      this.$refs.deleteButton.style.left = (this.$refs.tree.getBoundingClientRect().right - this.$refs.deleteButton.style.width.replace('px', '')) + 'px'
+      this.$refs.deleteButton.style.display = 'block'
+    },
     positionHighlight: function (highlight, node, color) {
-      var elem = document.getElementById(node.path)
+      var elem = document.getElementById(node.path + '/' + node.name)
       this.hideHighLight(highlight)
       highlight.style.top = elem.getBoundingClientRect().top + 'px'
       highlight.style.bottom = elem.getBoundingClientRect().bottom + 'px'
@@ -86,6 +100,9 @@ export default {
     },
     hideHighLight: function (highlight) {
       highlight.style.display = 'none'
+    },
+    hideDeleteIcon: function () {
+      this.$refs.deleteButton.style.display = 'none'
     }
 
   }
@@ -101,7 +118,8 @@ $font-size: 25px;
   order: 1;
   align-self: flex-start;
   padding-left: 15px;
-  padding-right: 15px;
+  padding-right: 45px;
+  z-index: 0;
 }
 .tree-title{
   width: 100%;
@@ -136,7 +154,7 @@ $font-size: 25px;
   border-right: none;
   display: none;
   border-left: none;
-  z-index: -1000;
+  z-index: -1;
   background-color: #babcbe38;
   position: absolute;
   // border: black 1px solid;
@@ -145,5 +163,13 @@ $font-size: 25px;
 .hover-hightlight{
   @extends .highlight;
   background-color: khaki;
+}
+.delete-icon{
+  float: right;
+  right: 10px;
+  display: none;
+  z-index: 1;
+  position: absolute;
+  cursor: pointer;
 }
 </style>

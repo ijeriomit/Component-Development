@@ -16,7 +16,7 @@ export default {
   },
   data: function () {
     return {
-      treeData: ['dir1/subdir1/subsubdir1/subsubsubdir1/file_1', 'dir2/subdir2/subsubdir2/subsubsubdir2/file_2']
+      treeData: ['dir1/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_1', 'dir1/subdir1/subsubdir1/file_1', 'dir1/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_2', 'dir2/subdir2/subsubdir2/subsubsubdir2/file_2']
     }
   }
 }

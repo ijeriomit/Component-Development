@@ -15,7 +15,6 @@ export default class Tree {
       name: name,
       isFolder: isFolder,
       contents: [],
-      selected: false,
       expanded: false,
       path: path
     }
@@ -26,14 +25,6 @@ export default class Tree {
     target.push(newNode)
     if (this.sort instanceof Function) {
       target.sort(this.sort)
-    }
-  }
-
-  removeNode (path) {
-    var pathStack = path.split('/')
-    var searchResult = this.searchTree(pathStack, this.treeObject)
-    if (searchResult.found) {
-      searchResult.targetList.splice(searchResult.index, 1)
     }
   }
 
@@ -64,16 +55,12 @@ export default class Tree {
 
   placeNodeInTree (path) {
     var pathArray = path.split(this.delimiter)
-    // console.log('Path', pathArray)
     for (var i = 0; i < pathArray.length; i++) {
       var targetPath = pathArray.slice(0, i + 1)
       var searchResult = this.searchTree(targetPath, this.treeObject)
       if (!searchResult.found) {
         var nodeName = pathArray[i]
-        var nodePath = '/' + pathArray.slice(0, i).join(this.delimiter) + '/' + nodeName
-        if (i === 0) {
-          nodePath = '/' + nodeName
-        }
+        var nodePath = pathArray.slice(0, i).join(this.delimiter)
         var isFolder = true
         if (i === pathArray.length - 1) {
           isFolder = false
@@ -86,6 +73,8 @@ export default class Tree {
   removeNodeFromTree (path) {
     var pathArray = path.split(this.delimiter)
     var searchResult = this.searchTree(pathArray, this.treeObject)
+    const log = JSON.stringify(searchResult)
+    console.log('Search Result ', log)
     if (searchResult) {
       searchResult.targetList.splice(searchResult.index, 1)
     }
