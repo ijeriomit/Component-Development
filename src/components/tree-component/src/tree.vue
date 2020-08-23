@@ -70,10 +70,14 @@ export default {
       }
     },
     clickedNode: function (node) {
+      var that = this
       node.expanded = !node.expanded
       this.selectedNode = node
-      this.positionHighlight(this.$refs.highlight, node, true)
-      this.positionDeleteButton(node)
+      setTimeout(function () {
+        that.positionHighlight(that.$refs.highlight, node, true)
+        that.positionDeleteButton(node)
+      }, 25)
+
       if (!node.isFolder && this.onClickFunction instanceof Function) {
         this.onClickFunction(node.path)
       }
@@ -145,7 +149,7 @@ $font-size: 25px;
   height: fit-content;
 }
 .folder{
-  transition: all 0.3s ease-in-out;
+  // transition: all 0.2s ease-in-out;
   height: 0px;
   overflow: hidden;
 }
