@@ -1,5 +1,5 @@
 <template>
-  <div class ="wrapper">
+  <div class ="wrapper" ref="wrapper">
     <div class= "tree-title">
       {{title}}
     </div>
@@ -10,8 +10,8 @@
 
     <ul class="tree" ref="tree">
       <node @node-clicked="clickedNode"
-        @node-hovered="positionHighlight($refs.hoverHighlight, $event)"
-        @hovered-off-node ="hideHighLight($refs.hoverHighlight, $event)"
+        @node-hovered="hoveredOnNode($event)"
+        @hovered-off-node ="hoveredOffNode()"
         v-for='node in tree.treeObject'
         :key='node.name' :class='{expanded: node.expanded}'
         :node='node'
@@ -50,8 +50,14 @@ export default {
   data: function () {
     return {
       selectedNode: null,
+      hoveredNode: null,
       tree: null
     }
+  },
+  mounted: function () {
+    // this.$refs.hoverHighlight.style.width = this.$refs.tree.offsetWidth + 'px'
+    // this.$refs.highlight.style.width = this.$refs.tree.offsetWidth + 'px'
+    // this.updatePosition()
   },
   methods: {
     deleteNode: function () {
@@ -74,7 +80,7 @@ export default {
       node.expanded = !node.expanded
       this.selectedNode = node
       setTimeout(function () {
-        that.positionHighlight(that.$refs.highlight, node, true)
+        that.positionHighlight(that.$refs.highlight, node, 'khaki')
         that.positionDeleteButton(node)
       }, 25)
 
@@ -82,31 +88,57 @@ export default {
         this.onClickFunction(node.path)
       }
     },
+    hoveredOnNode: function (node) {
+      this.hoveredNode = node
+      // this.positionHighlight(this.$refs.hoverHighlight, this.hoveredNode)
+    },
+    hoveredOffNode: function () {
+      this.hoveredNode = null
+      this.hideHighLight(this.$refs.hoverHighlight)
+    },
     positionDeleteButton: function (node) {
-      var elem = document.getElementById(node.path + '/' + node.name)
-      this.hideDeleteIcon()
-      this.$refs.deleteButton.style.top = elem.getBoundingClientRect().top + 'px'
-      this.$refs.deleteButton.style.bottom = elem.getBoundingClientRect().bottom + 'px'
-      this.$refs.deleteButton.style.left = (this.$refs.tree.getBoundingClientRect().right - this.$refs.deleteButton.style.width.replace('px', '')) + 'px'
-      this.$refs.deleteButton.style.display = 'block'
+      if (node != null) {
+        var elem = document.getElementById(node.path + '/' + node.name)
+        // this.hideDeleteIcon()
+        this.$refs.deleteButton.style.top = elem.getBoundingClientRect().top + window.scrollY + 'px'
+        // this.$refs.deleteButton.style.bottom = elem.getBoundingClientRect().bottom + 'px'
+        this.$refs.deleteButton.style.left = (this.$refs.tree.getBoundingClientRect().right - this.$refs.deleteButton.style.width.replace('px', '')) + 'px'
+        this.$refs.deleteButton.style.display = 'block'
+      }
     },
     positionHighlight: function (highlight, node, color) {
-      var elem = document.getElementById(node.path + '/' + node.name)
-      this.hideHighLight(highlight)
-      highlight.style.top = elem.getBoundingClientRect().top + 'px'
-      highlight.style.bottom = elem.getBoundingClientRect().bottom + 'px'
-      highlight.style.width = this.$refs.tree.offsetWidth + 'px'
-      highlight.style.height = elem.offsetHeight + 'px'
-      if (color) {
-        highlight.style.backgroundColor = this.highlightColor
+      if (node != null) {
+        var elem = document.getElementById(node.path + '/' + node.name)
+        this.hideHighLight(highlight)
+        if (elem) {
+          highlight.style.top = (elem.getBoundingClientRect().top + (window.scrollY)) - elem.offsetHeight + 'px'
+          // highlight.style.top = this.$refs.wrapper.offsetParent.offsetTop + this.$refs.tree.offsetTop + elem.scrollTop + 'px'
+          // highlight.style.bottom = elem.getBoundingClientRect().top + (window.scrollY) + 'px'
+          highlight.style.width = this.$refs.tree.offsetWidth + 'px'
+          highlight.style.height = elem.offsetHeight + 'px'
+          if (color) {
+            highlight.style.backgroundColor = color
+          }
+          highlight.style.display = 'block'
+        } else {
+          console.log('node does not exist', node, node.path + '/' + node.name)
+        }
       }
-      highlight.style.display = 'block'
     },
     hideHighLight: function (highlight) {
       highlight.style.display = 'none'
     },
     hideDeleteIcon: function () {
       this.$refs.deleteButton.style.display = 'none'
+    },
+    updatePosition: function () {
+      var that = this
+      setInterval(() => {
+        console.log('in update loop')
+        // that.positionHighlight(that.$refs.hoverHighlight, that.hoveredNode)
+        that.positionHighlight(that.$refs.highlight, that.selectedNode, that.highlightColor)
+        that.positionDeleteButton(that.selectedNode)
+      }, 50)
     }
 
   }
@@ -119,6 +151,7 @@ $border:2px solid $text-color;
 $font-size: 25px;
 .tree{
   border: none;
+  color: red;
   order: 1;
   align-self: flex-start;
   padding-left: 15px;
@@ -160,9 +193,10 @@ $font-size: 25px;
   border-left: none;
   z-index: -1;
   background-color: #babcbe38;
-  position: absolute;
+  position: relative;
+  width: 100%;
   // border: black 1px solid;
-  transition: all 0.5s linear;
+  // transition: all 0.5s linear;
 }
 .hover-hightlight{
   @extends .highlight;

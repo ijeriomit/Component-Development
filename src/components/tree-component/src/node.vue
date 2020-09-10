@@ -1,6 +1,6 @@
 <template>
     <li >
-        <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node', node)" class="node-title" :id="node.path+ '/'+ node.name"  @click="$emit('node-clicked', node)">
+        <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node')" class="node-title" :id="node.path+ '/'+ node.name"  @click="$emit('node-clicked', node)">
           <div class="side-branch-icon-wrapper">
             <div class="side-branch-icon">
             </div>
@@ -12,7 +12,7 @@
           </div>
         </div>
         <ul v-if="node.contents" :class='{expanded: node.expanded}' class="folder" >
-            <node @node-hovered="$emit('node-hovered', $event)" @hovered-off-node="$emit('hovered-off-node', $event)" @node-clicked="$emit('node-clicked', $event)"
+            <node @node-hovered="$emit('node-hovered', $event)" @hovered-off-node="$emit('hovered-off-node')" @node-clicked="$emit('node-clicked', $event)"
          v-for='node in node.contents' :key='node.name'  :node='node'>
             </node>
         </ul>
@@ -49,6 +49,7 @@ li {
   list-style: none;
   padding-top: 3.5%;
   padding-bottom: 3.5%;
+  z-index: 0;
 }
 .selected{
   background-color: orange;

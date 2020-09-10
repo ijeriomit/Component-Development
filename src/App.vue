@@ -2,7 +2,9 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Hello Medium"/> -->
+    <!-- <div style="height: 500px; overflow-y: scroll;"> -->
     <Tree class="tree-wrapper" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -16,7 +18,7 @@ export default {
   },
   data: function () {
     return {
-      treeData: ['dir1/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_1', 'dir1/subdir1/subsubdir1/file_1', 'dir1/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_2', 'dir2/subdir2/subsubdir2/subsubsubdir2/file_2']
+      treeData: ['dir1/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_1', 'dir1/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_2', 'dir1/subdir1/subsubdir1/file_1', 'dir1/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_2', 'dir2/subdir2/subsubdir2/subsubsubdir2/file_2', 'dir3/subdir1/subsubdir1/subsubsubdir1/subsubsubsubdir1/file_1']
     }
   }
 }
@@ -32,9 +34,10 @@ export default {
   margin-top: 60px;
 }
 .tree-wrapper{
-  color: black;
+  color: red;
   border: 2px solid black;
   font-size: 25px;
   width: max-content;
+
 }
 </style>
