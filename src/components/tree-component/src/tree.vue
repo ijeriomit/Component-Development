@@ -1,23 +1,25 @@
 <template>
   <div class ="wrapper" ref="wrapper">
-    <div class= "tree-title">
+    <div class= "tree-title" ref="treeTitle">
       {{title}}
     </div>
-    <div class="highlight" ref="hoverHighlight" ></div>
-    <div class="highlight" ref="highlight">
-    </div>
-    <font-awesome-icon style="width: 40px;" ref="deleteButton" @click="deleteNode" class="delete-icon" :icon="['fa', 'trash-alt']"/>
+    <div class="tree-body" ref="treeBody">
+      <div class="highlight" ref="hoverHighlight" ></div>
+      <div class="highlight" ref="highlight"></div>
+        <!-- <font-awesome-icon ref="deleteButton" @click="deleteNode" class="delete-icon" :icon="['fa', 'trash-alt']"/> -->
+      <ul class="tree" ref="tree">
+        <!-- @node-hovered="positionHighlight($refs.hoverHighlight, $event)"
+          @hovered-off-node ="hideHighLight($refs.hoverHighlight)" -->
+        <node @node-clicked="clickedNode"
+          @delete-node="deleteNode"
 
-    <ul class="tree" ref="tree">
-      <node @node-clicked="clickedNode"
-        @node-hovered="hoveredOnNode($event)"
-        @hovered-off-node ="hoveredOffNode()"
-        v-for='node in tree.treeObject'
-        :key='node.name' :class='{expanded: node.expanded}'
-        :node='node'
-        :deletable='contentDeletable'>
-      </node>
-    </ul>
+          v-for='node in tree.treeObject'
+          :key='node.name' :class='{expanded: node.expanded}'
+          :node='node'
+          :deletable='contentDeletable'>
+        </node>
+      </ul>
+    </div>
   </div>
 </template>
 <script>
@@ -25,7 +27,6 @@ import Tree from './Tree'
 import node from './node'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFolder, faFolderOpen, faFile, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export default {
   name: 'tree',
@@ -44,103 +45,65 @@ export default {
     onDeleteFunction: { type: Function, required: false }
   },
   components: {
-    node,
-    FontAwesomeIcon
+    node
   },
   data: function () {
     return {
       selectedNode: null,
-      hoveredNode: null,
       tree: null
     }
   },
-  mounted: function () {
-    // this.$refs.hoverHighlight.style.width = this.$refs.tree.offsetWidth + 'px'
-    // this.$refs.highlight.style.width = this.$refs.tree.offsetWidth + 'px'
-    // this.updatePosition()
-  },
   methods: {
-    deleteNode: function () {
-      console.log('deleted file', this.selectedNode)
-      var path = ''
-      if (this.selectedNode.path === '') {
-        path = this.selectedNode.name
-      } else {
-        path = this.selectedNode.path + '/' + this.selectedNode.name
-      }
-      this.tree.removeNodeFromTree(path)
-      this.hideDeleteIcon()
-      this.hideHighLight(this.$refs.highlight)
-      if (this.onDeleteFunction instanceof Function) {
-        this.onDeleteFunction(node.name)
+    deleteNode: function (node) {
+      if (this.selectedNode === node) {
+        console.log('deleted file', node)
+        var path = ''
+        if (node.path === '') {
+          path = node.name
+        } else {
+          path = node.path + '/' + node.name
+        }
+        this.tree.removeNodeFromTree(path)
+        this.selectedNode = null
+        this.hideHighLight(this.$refs.highlight)
+        if (this.onDeleteFunction instanceof Function) {
+          this.onDeleteFunction(node.name)
+        }
       }
     },
     clickedNode: function (node) {
-      var that = this
+      // var that = this
+      console.log('node-clicked', node)
       node.expanded = !node.expanded
+      node.selected = true
+      if (this.selectedNode !== null && this.selectedNode !== node) {
+        this.selectedNode.selected = false
+      }
       this.selectedNode = node
-      setTimeout(function () {
-        that.positionHighlight(that.$refs.highlight, node, 'khaki')
-        that.positionDeleteButton(node)
-      }, 25)
-
+      this.positionHighlight(this.$refs.highlight, node, 'khaki')
       if (!node.isFolder && this.onClickFunction instanceof Function) {
         this.onClickFunction(node.path)
       }
     },
-    hoveredOnNode: function (node) {
-      this.hoveredNode = node
-      // this.positionHighlight(this.$refs.hoverHighlight, this.hoveredNode)
-    },
-    hoveredOffNode: function () {
-      this.hoveredNode = null
-      this.hideHighLight(this.$refs.hoverHighlight)
-    },
-    positionDeleteButton: function (node) {
-      if (node != null) {
-        var elem = document.getElementById(node.path + '/' + node.name)
-        // this.hideDeleteIcon()
-        this.$refs.deleteButton.style.top = elem.getBoundingClientRect().top + window.scrollY + 'px'
-        // this.$refs.deleteButton.style.bottom = elem.getBoundingClientRect().bottom + 'px'
-        this.$refs.deleteButton.style.left = (this.$refs.tree.getBoundingClientRect().right - this.$refs.deleteButton.style.width.replace('px', '')) + 'px'
-        this.$refs.deleteButton.style.display = 'block'
-      }
-    },
     positionHighlight: function (highlight, node, color) {
-      if (node != null) {
-        var elem = document.getElementById(node.path + '/' + node.name)
-        this.hideHighLight(highlight)
-        if (elem) {
-          highlight.style.top = (elem.getBoundingClientRect().top + (window.scrollY)) - elem.offsetHeight + 'px'
-          // highlight.style.top = this.$refs.wrapper.offsetParent.offsetTop + this.$refs.tree.offsetTop + elem.scrollTop + 'px'
-          // highlight.style.bottom = elem.getBoundingClientRect().top + (window.scrollY) + 'px'
-          highlight.style.width = this.$refs.tree.offsetWidth + 'px'
-          highlight.style.height = elem.offsetHeight + 'px'
-          if (color) {
-            highlight.style.backgroundColor = color
-          }
-          highlight.style.display = 'block'
-        } else {
-          console.log('node does not exist', node, node.path + '/' + node.name)
+      var elem = document.getElementById(node.path + '/' + node.name)
+      this.hideHighLight(highlight)
+      console.log('before, ', elem.offsetTop)
+      if (elem) {
+        highlight.style.top = elem.getBoundingClientRect().top - (this.$refs.treeTitle.offsetHeight + elem.offsetHeight + highlight.offsetHeight) + window.scrollY + this.$refs.wrapper.parentElement.scrollTop + this.$refs.treeBody.scrollTop + 'px'
+        console.log('wrapper scroll: ', this.$refs.treeBody.scrollTop)
+        highlight.style.width = this.$refs.tree.offsetWidth + 'px'
+        highlight.style.height = elem.offsetHeight + 'px'
+        if (color) {
+          highlight.style.backgroundColor = color
         }
+        highlight.style.visibility = 'visible'
       }
+      console.log('after ', elem.offsetTop)
     },
     hideHighLight: function (highlight) {
-      highlight.style.display = 'none'
-    },
-    hideDeleteIcon: function () {
-      this.$refs.deleteButton.style.display = 'none'
-    },
-    updatePosition: function () {
-      var that = this
-      setInterval(() => {
-        console.log('in update loop')
-        // that.positionHighlight(that.$refs.hoverHighlight, that.hoveredNode)
-        that.positionHighlight(that.$refs.highlight, that.selectedNode, that.highlightColor)
-        that.positionDeleteButton(that.selectedNode)
-      }, 50)
+      highlight.style.visibility = 'hidden'
     }
-
   }
 }
 </script>
@@ -152,11 +115,17 @@ $font-size: 25px;
 .tree{
   border: none;
   color: red;
-  order: 1;
+  // order: 1;
   align-self: flex-start;
   padding-left: 15px;
   padding-right: 45px;
   z-index: 0;
+}
+.tree-body{
+  height: 90%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  order: 2;
 }
 .tree-title{
   width: 100%;
@@ -168,6 +137,7 @@ $font-size: 25px;
   border-right: none;
   border-left: none;
   border-bottom: inherit;
+  // z-index: 0;
 }
 .wrapper{
   display: flex;
@@ -187,27 +157,23 @@ $font-size: 25px;
   overflow: hidden;
 }
 .highlight{
-
-  border-right: none;
-  display: none;
-  border-left: none;
+  visibility: hidden;
+  // display: none;
   z-index: -1;
   background-color: #babcbe38;
   position: relative;
   width: 100%;
-  // border: black 1px solid;
-  // transition: all 0.5s linear;
+  margin: 0px;
+  pointer-events: none;
+  order: 1;
+}
+.highlight-wrapper{
+  display: flex;
+  flex-direction: column;
 }
 .hover-hightlight{
   @extends .highlight;
   background-color: khaki;
 }
-.delete-icon{
-  float: right;
-  right: 10px;
-  display: none;
-  z-index: 1;
-  position: absolute;
-  cursor: pointer;
-}
+
 </style>

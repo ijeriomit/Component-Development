@@ -2,8 +2,10 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Hello Medium"/> -->
+    <!-- <div style="height: 550px; overflow-y: scroll;"> -->
     <!-- <div style="height: 500px; overflow-y: scroll;"> -->
     <Tree class="tree-wrapper" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
+    <!-- </div> -->
     <!-- </div> -->
   </div>
 </template>
@@ -38,6 +40,7 @@ export default {
   border: 2px solid black;
   font-size: 25px;
   width: max-content;
+  height: 400px;
 
 }
 </style>

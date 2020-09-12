@@ -1,18 +1,22 @@
 <template>
     <li >
+        <div class = "title-wrapper">
         <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node')" class="node-title" :id="node.path+ '/'+ node.name"  @click="$emit('node-clicked', node)">
           <div class="side-branch-icon-wrapper">
             <div class="side-branch-icon">
             </div>
-        </div>
+          </div>
           <font-awesome-icon v-if="node.isFolder" :icon="icon(node.expanded)" />
           <font-awesome-icon v-else :icon="['fa', 'file']" style="padding-left: 10px;"/>
           <div class="name">
               {{node.name}}
           </div>
         </div>
+        <font-awesome-icon v-if="node.selected" @click="$emit('delete-node', node)" class="delete-icon" :icon="['fa', 'trash-alt']"/>
+        </div>
+
         <ul v-if="node.contents" :class='{expanded: node.expanded}' class="folder" >
-            <node @node-hovered="$emit('node-hovered', $event)" @hovered-off-node="$emit('hovered-off-node')" @node-clicked="$emit('node-clicked', $event)"
+            <node @delete-node="$emit('delete-node', $event)" @node-hovered="$emit('node-hovered', $event)" @hovered-off-node="$emit('hovered-off-node')" @node-clicked="$emit('node-clicked', $event)"
          v-for='node in node.contents' :key='node.name'  :node='node'>
             </node>
         </ul>
@@ -54,8 +58,13 @@ li {
 .selected{
   background-color: orange;
 }
+.title-wrapper{
+  display: flex;
+  flex-direction: row;
+}
 .node-title{
  display: flex;
+ order: 1;
  flex-direction: row;
  justify-content: flex-start;
  align-items: center;
@@ -81,8 +90,15 @@ li {
     padding-right: 2.5px;
     padding-left: 2.5px;
   }
-
 }
+.delete-icon{
+    float: right;
+    position: relative;
+    cursor: pointer;
+    width: 30px;
+    order: 2;
+    right: -10%
+  }
 .expanded.folder{
   height: fit-content;
 }
@@ -91,4 +107,5 @@ li {
   height: 0px;
   overflow: hidden;
 }
+
 </style>

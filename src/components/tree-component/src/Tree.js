@@ -15,7 +15,8 @@ export default class Tree {
       name: name,
       isFolder: isFolder,
       contents: [],
-      expanded: false,
+      expanded: true,
+      selected: false,
       path: path
     }
   }
