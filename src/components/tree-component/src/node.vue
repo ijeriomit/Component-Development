@@ -1,7 +1,7 @@
 <template>
     <li >
         <div class = "title-wrapper">
-        <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node')" class="node-title" :id="node.path+ '/'+ node.name"  @click="$emit('node-clicked', node)">
+        <div @mouseover="$emit('node-hovered', node)" @mouseleave="$emit('hovered-off-node')" class="node-title" :id="node.getFullPath()"  @click="$emit('node-clicked', node)">
           <div class="side-branch-icon-wrapper">
             <div class="side-branch-icon">
             </div>
@@ -12,12 +12,12 @@
               {{node.name}}
           </div>
         </div>
-        <font-awesome-icon v-if="node.selected" @click="$emit('delete-node', node)" class="delete-icon" :icon="['fa', 'trash-alt']"/>
+        <font-awesome-icon v-if="node.selected && deletable" @click="$emit('delete-node', node)" class="delete-icon" :icon="['fa', 'trash-alt']"/>
         </div>
 
         <ul v-if="node.contents" :class='{expanded: node.expanded}' class="folder" >
             <node @delete-node="$emit('delete-node', $event)" @node-hovered="$emit('node-hovered', $event)" @hovered-off-node="$emit('hovered-off-node')" @node-clicked="$emit('node-clicked', $event)"
-         v-for='node in node.contents' :key='node.name'  :node='node'>
+         v-for='node in node.contents' :key='node.name'  :node='node' :deletable='deletable'>
             </node>
         </ul>
     </li>

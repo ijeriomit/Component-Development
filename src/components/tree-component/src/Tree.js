@@ -11,13 +11,17 @@ export default class Tree {
 
   initializeNode (name, isFolder, path) {
     console.log('Node: ', name, ' Path: ', path)
+    var that = this
     return {
       name: name,
       isFolder: isFolder,
       contents: [],
-      expanded: true,
+      expanded: false,
       selected: false,
-      path: path
+      path: path,
+      getFullPath: function () {
+        return this.path + that.delimiter + this.name
+      }
     }
   }
 

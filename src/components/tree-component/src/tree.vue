@@ -4,15 +4,13 @@
       {{title}}
     </div>
     <div class="tree-body" ref="treeBody">
-      <div class="highlight" ref="hoverHighlight" ></div>
+      <div class="hover-highlight" ref="hoverHighlight" ></div>
       <div class="highlight" ref="highlight"></div>
-        <!-- <font-awesome-icon ref="deleteButton" @click="deleteNode" class="delete-icon" :icon="['fa', 'trash-alt']"/> -->
       <ul class="tree" ref="tree">
-        <!-- @node-hovered="positionHighlight($refs.hoverHighlight, $event)"
-          @hovered-off-node ="hideHighLight($refs.hoverHighlight)" -->
         <node @node-clicked="clickedNode"
           @delete-node="deleteNode"
-
+          @node-hovered="positionHighlight($refs.hoverHighlight, $event, hoverHighlightColor,  true)"
+          @hovered-off-node ="hideHighLight($refs.hoverHighlight)"
           v-for='node in tree.treeObject'
           :key='node.name' :class='{expanded: node.expanded}'
           :node='node'
@@ -40,7 +38,8 @@ export default {
     sort: { type: Function, required: false },
     title: { type: String, required: false },
     highlightColor: { type: String, required: false, default: 'khaki' },
-    contentDeletable: { type: Boolean, required: false },
+    hoverHighlightColor: { type: String, required: false, default: '#babcbe38d' },
+    contentDeletable: { type: Boolean, required: false, default: true },
     onClickFunction: { type: Function, required: false },
     onDeleteFunction: { type: Function, required: false }
   },
@@ -53,10 +52,19 @@ export default {
       tree: null
     }
   },
+  mounted: function () {
+    if (this.tree.treeObject[0] !== undefined) {
+      var elem = document.getElementById(this.tree.treeObject[0].getFullPath())
+      if (elem) {
+        this.$refs.highlight.style.height = elem.offsetHeight + 'px'
+        this.$refs.hoverHighlight.style.height = elem.offsetHeight + 'px'
+        this.$refs.tree.style.top = -2 * elem.offsetHeight + 'px'
+      }
+    }
+  },
   methods: {
     deleteNode: function (node) {
       if (this.selectedNode === node) {
-        console.log('deleted file', node)
         var path = ''
         if (node.path === '') {
           path = node.name
@@ -72,34 +80,34 @@ export default {
       }
     },
     clickedNode: function (node) {
-      // var that = this
-      console.log('node-clicked', node)
       node.expanded = !node.expanded
       node.selected = true
       if (this.selectedNode !== null && this.selectedNode !== node) {
         this.selectedNode.selected = false
       }
       this.selectedNode = node
-      this.positionHighlight(this.$refs.highlight, node, 'khaki')
+      this.positionHighlight(this.$refs.highlight, node, this.highlightColor, false)
       if (!node.isFolder && this.onClickFunction instanceof Function) {
         this.onClickFunction(node.path)
       }
     },
-    positionHighlight: function (highlight, node, color) {
-      var elem = document.getElementById(node.path + '/' + node.name)
+    positionHighlight: function (highlight, node, color, hover) {
+      var elem = document.getElementById(node.getFullPath())
       this.hideHighLight(highlight)
-      console.log('before, ', elem.offsetTop)
+
       if (elem) {
-        highlight.style.top = elem.getBoundingClientRect().top - (this.$refs.treeTitle.offsetHeight + elem.offsetHeight + highlight.offsetHeight) + window.scrollY + this.$refs.wrapper.parentElement.scrollTop + this.$refs.treeBody.scrollTop + 'px'
-        console.log('wrapper scroll: ', this.$refs.treeBody.scrollTop)
-        highlight.style.width = this.$refs.tree.offsetWidth + 'px'
-        highlight.style.height = elem.offsetHeight + 'px'
-        if (color) {
+        setTimeout(() => {
+          if (hover === true) {
+            highlight.style.top = elem.getBoundingClientRect().top - (this.$refs.treeTitle.offsetHeight + elem.offsetHeight + highlight.offsetHeight) + window.scrollY + this.$refs.wrapper.parentElement.scrollTop + this.$refs.treeBody.scrollTop + 'px'
+          } else {
+            highlight.style.top = elem.getBoundingClientRect().top - (this.$refs.treeTitle.offsetHeight + elem.offsetHeight + (2 * highlight.offsetHeight)) + window.scrollY + this.$refs.wrapper.parentElement.scrollTop + this.$refs.treeBody.scrollTop + 'px'
+          }
           highlight.style.backgroundColor = color
-        }
-        highlight.style.visibility = 'visible'
+
+          highlight.style.visibility = 'visible'
+        }, 100
+        )
       }
-      console.log('after ', elem.offsetTop)
     },
     hideHighLight: function (highlight) {
       highlight.style.visibility = 'hidden'
@@ -114,12 +122,12 @@ $border:2px solid $text-color;
 $font-size: 25px;
 .tree{
   border: none;
-  color: red;
-  // order: 1;
   align-self: flex-start;
   padding-left: 15px;
   padding-right: 45px;
   z-index: 0;
+  margin-top: 15px;
+  position: relative;
 }
 .tree-body{
   height: 90%;
@@ -137,7 +145,6 @@ $font-size: 25px;
   border-right: none;
   border-left: none;
   border-bottom: inherit;
-  // z-index: 0;
 }
 .wrapper{
   display: flex;
@@ -152,28 +159,24 @@ $font-size: 25px;
   height: fit-content;
 }
 .folder{
-  // transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   height: 0px;
   overflow: hidden;
 }
 .highlight{
   visibility: hidden;
-  // display: none;
   z-index: -1;
+  top: 100%;
+  height: 0px;
   background-color: #babcbe38;
   position: relative;
   width: 100%;
-  margin: 0px;
+  bottom: -0px;
   pointer-events: none;
-  order: 1;
 }
-.highlight-wrapper{
-  display: flex;
-  flex-direction: column;
-}
-.hover-hightlight{
-  @extends .highlight;
-  background-color: khaki;
+.hover-highlight{
+  @extend .highlight;
+  z-index: -2;
 }
 
 </style>
