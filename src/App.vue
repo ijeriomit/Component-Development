@@ -4,7 +4,7 @@
     <!-- <HelloWorld msg="Hello Medium"/> -->
     <!-- <div style="height: 550px; overflow-y: scroll;"> -->
     <!-- <div style="height: 500px; overflow-y: scroll;"> -->
-    <Tree class="tree-wrapper" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"' :highlightColor="'khaki'"/>
+    <Tree class="tree-wrapper" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
     <!-- </div> -->
     <!-- </div> -->
   </div>

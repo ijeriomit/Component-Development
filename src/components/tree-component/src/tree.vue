@@ -4,17 +4,17 @@
       {{title}}
     </div>
     <div class="tree-body" ref="treeBody">
-      <div class="hover-highlight" ref="hoverHighlight" ></div>
-      <div class="highlight" ref="highlight"></div>
       <ul class="tree" ref="tree">
         <node @node-clicked="clickedNode"
           @delete-node="deleteNode"
-          @node-hovered="positionHighlight($refs.hoverHighlight, $event, hoverHighlightColor,  true)"
-          @hovered-off-node ="hideHighLight($refs.hoverHighlight)"
           v-for='node in tree.treeObject'
           :key='node.name' :class='{expanded: node.expanded}'
           :node='node'
-          :deletable='contentDeletable'>
+          :deletable='contentDeletable'
+          :highlightHeight='highlightHeight'
+          :highlightWidth='highlightWidth'
+          :highlightColor='highlightColor'
+          :hoverHighlightColor='hoverHighlightColor'>
         </node>
       </ul>
     </div>
@@ -30,15 +30,15 @@ export default {
   name: 'tree',
   created: function () {
     library.add(faFolder, faFolderOpen, faFile, faTrashAlt)
-    this.tree = new Tree(this.treeData, this.delimeter)
+    this.tree = new Tree(this.treeData, this.delimeter, this.sort)
   },
   props: {
     treeData: { type: Array, required: true },
     delimeter: { type: String, required: true },
-    sort: { type: Function, required: false },
+    sort: { type: Function, required: false, default: null },
     title: { type: String, required: false },
     highlightColor: { type: String, required: false, default: 'khaki' },
-    hoverHighlightColor: { type: String, required: false, default: '#babcbe38d' },
+    hoverHighlightColor: { type: String, required: false, default: 'darkgray' },
     contentDeletable: { type: Boolean, required: false, default: true },
     onClickFunction: { type: Function, required: false },
     onDeleteFunction: { type: Function, required: false }
@@ -49,16 +49,17 @@ export default {
   data: function () {
     return {
       selectedNode: null,
-      tree: null
+      tree: null,
+      highlightWidth: '',
+      highlightHeight: ''
     }
   },
   mounted: function () {
     if (this.tree.treeObject[0] !== undefined) {
       var elem = document.getElementById(this.tree.treeObject[0].getFullPath())
       if (elem) {
-        this.$refs.highlight.style.height = elem.offsetHeight + 'px'
-        this.$refs.hoverHighlight.style.height = elem.offsetHeight + 'px'
-        this.$refs.tree.style.top = -2 * elem.offsetHeight + 'px'
+        this.highlightWidth = this.$refs.treeBody.offsetWidth + 'px'
+        this.highlightHeight = elem.offsetHeight + 'px'
       }
     }
   },
@@ -86,31 +87,9 @@ export default {
         this.selectedNode.selected = false
       }
       this.selectedNode = node
-      this.positionHighlight(this.$refs.highlight, node, this.highlightColor, false)
       if (!node.isFolder && this.onClickFunction instanceof Function) {
         this.onClickFunction(node.path)
       }
-    },
-    positionHighlight: function (highlight, node, color, hover) {
-      var elem = document.getElementById(node.getFullPath())
-      this.hideHighLight(highlight)
-
-      if (elem) {
-        setTimeout(() => {
-          if (hover === true) {
-            highlight.style.top = elem.getBoundingClientRect().top - (this.$refs.treeTitle.offsetHeight + elem.offsetHeight + highlight.offsetHeight) + window.scrollY + this.$refs.wrapper.parentElement.scrollTop + this.$refs.treeBody.scrollTop + 'px'
-          } else {
-            highlight.style.top = elem.getBoundingClientRect().top - (this.$refs.treeTitle.offsetHeight + elem.offsetHeight + (2 * highlight.offsetHeight)) + window.scrollY + this.$refs.wrapper.parentElement.scrollTop + this.$refs.treeBody.scrollTop + 'px'
-          }
-          highlight.style.backgroundColor = color
-
-          highlight.style.visibility = 'visible'
-        }, 100
-        )
-      }
-    },
-    hideHighLight: function (highlight) {
-      highlight.style.visibility = 'hidden'
     }
   }
 }
@@ -124,7 +103,6 @@ $font-size: 25px;
   border: none;
   align-self: flex-start;
   padding-left: 15px;
-  padding-right: 45px;
   z-index: 0;
   margin-top: 15px;
   position: relative;
