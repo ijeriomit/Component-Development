@@ -3,6 +3,7 @@
     <div class= "tree-title" ref="treeTitle">
       {{title}}
     </div>
+    <search-bar :searchOnType="true" :exampleSearchTerm="'dir'" :searchFunction="function(searchKey){ return tree.traverseTree(tree.treeObject, tree.searchCheck , [], searchKey)}"></search-bar>
     <div class="tree-body" ref="treeBody">
       <ul class="tree" ref="tree">
         <node @node-clicked="clickedNode"
@@ -25,7 +26,7 @@ import Tree from './Tree'
 import node from './node'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFolder, faFolderOpen, faFile, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
-
+import SearchBar from '@/components/search-bar-component/search-bar.vue'
 export default {
   name: 'tree',
   created: function () {
@@ -44,7 +45,8 @@ export default {
     onDeleteFunction: { type: Function, required: false }
   },
   components: {
-    node
+    node,
+    'search-bar': SearchBar
   },
   data: function () {
     return {
@@ -64,6 +66,7 @@ export default {
     }
   },
   methods: {
+
     deleteNode: function (node) {
       if (this.selectedNode === node) {
         var path = ''

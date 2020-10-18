@@ -5,6 +5,7 @@
     <!-- <div style="height: 550px; overflow-y: scroll;"> -->
     <!-- <div style="height: 500px; overflow-y: scroll;"> -->
     <Tree class="tree-wrapper" :treeData='treeData' :delimeter='"/"' :title='"Tree dir"'/>
+    <!-- <search-bar></search-bar> -->
     <!-- </div> -->
     <!-- </div> -->
   </div>
@@ -12,11 +13,13 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
+// import SearchBar from './components/search-bar-component/search-bar.vue'
 import Tree from './components/tree-component/src/tree.vue'
 export default {
   name: 'App',
   components: {
     Tree
+    // 'search-bar': SearchBar
   },
   data: function () {
     return {

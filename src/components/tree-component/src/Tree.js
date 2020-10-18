@@ -85,21 +85,30 @@ export default class Tree {
     }
   }
 
-  traverseTree (searchList, action, data, key) {
+  searchCheck (target, hits, searchKey) {
+    if (target.name.includes(searchKey)) {
+      hits.push(target)
+    }
+    return hits
+  }
+
+  traverseTree (searchList, action, hits, key) {
     if (searchList != null) {
       if (searchList.length !== 0) {
         for (var i = 0; i < searchList.length; i++) {
-          data = this.traverseTree(
+          hits = this.traverseTree(
             searchList[i].contents,
             action,
-            data,
+            hits,
             key
           )
-          data = action(searchList, i, data, key)
+          if (action instanceof Function) {
+            hits = action(searchList[i], hits, key)
+          }
         }
-        return data
+        return hits
       }
     }
-    return data
+    return hits
   }
 };
