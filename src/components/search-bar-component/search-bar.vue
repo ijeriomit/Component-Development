@@ -1,25 +1,23 @@
 <template>
-    <div class="search-bar-wrapper">
+    <div class="component-wrapper">
         <div class="search-bar">
-            <button class="search-button" @click="search(searchTerm)" title="click to search" :class="[searchButtonRight ? 'search-button-right' : 'search-button-left']">
-                <font-awesome-icon :icon="['fa', 'search']">
-                </font-awesome-icon>
-            </button>
             <input   v-if="!searchOnType" :placeholder='placeHolderText' type='text'  v-on:keyup="search(searchTerm)" v-model="searchTerm"/>
             <input  v-else type='text' :placeholder='placeHolderText' v-on:keyup.enter="search(searchTerm)" v-model="searchTerm"/>
+            <font-awesome-icon class="search-button" @click="search(searchTerm)" title="click to search" :class="[searchButtonRight ? 'search-button-right' : 'search-button-left']" :icon="['fa', 'search']">
+            </font-awesome-icon>
         </div>
         <ul v-if=" searchResults.length > 0 && enableResultList " class="search-results-wrapper">
-            <li v-for="result in searchResults" :key="result.path+result.name" >
-                <div v-if="result.hasOwnProperty('name') && result.hasOwnProperty('path') " class="search-result-wrapper">
-                    <div class="result-name">
+            <li v-for="result in searchResults" :key="result.path+result.name" @click="searchResulClicked(result)">
+                <div v-if="result.hasOwnProperty('name') && result.hasOwnProperty('path') " class="result-wrapper">
+                    <!-- <div class="result-name">
                         {{result.name}}
                     </div>
                     <div class="result-path">
                         {{result.path}}
-                    </div>
+                    </div> -->
                 </div>
-                <div v-else  class="search-result-wrapper">
-                    {{result}}
+                <div v-else  class="result-wrapper">
+                    <!-- {{result}} -->
                 </div>
             </li>
         </ul>
@@ -37,6 +35,7 @@ export default {
     exampleSearchTerm: { type: String, required: true, default: function () { console.error('No example search term was given. Please pass in example in order to validate your search function'); return '' } },
     searchOnType: { type: Boolean, required: false, default: false },
     searchFunction: { type: Function, required: true, default: function () { console.error('No Search Function Was Defined'); return [] } },
+    onSearchResultClick: { type: Function, required: true, default: function () { console.error('No Search Result Click Function  was defined') } },
     enableResultList: { type: Boolean, required: false, default: true },
     searchButtonRight: { type: Boolean, required: false, default: true },
     placeHolderText: { type: String, required: false, default: 'Type to search...' }
@@ -64,8 +63,9 @@ export default {
     search: function () {
       this.searchResults = this.searchFunction(this.searchTerm)
     },
-    searchResultClicked: function () {
+    searchResultClicked: function (result) {
       this.searchResults = []
+      this.onSearchResultClicked(result)
     },
     searchFunctionValidator: function () {
       var results = this.searchFunction(this.exampleSearchTerm)
@@ -89,17 +89,29 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+$defaultBackgroundColor: gray;
+$defaultBorderRadius: 25px;
 input{
     width: 85%;
 }
 button{
     width: 15%;
 }
- .search-bar-wrapper{
+.search-button{
+  font-size: 16px;
+  padding-left: 5px;
+    padding-right: 5px;
+    /* width: fit-content; */
+    cursor: pointer;
+}
+ .component-wrapper{
     display: flex;
     align-items: baseline;
     flex-flow: column;
     width: 300px;
+    padding: 10px;
+    justify-content: space-around;
+
  }
  .search-button-right{
      order: 1;
@@ -108,35 +120,50 @@ button{
      order: -1;
  }
  .search-bar{
-     order: 1;
-     display: flex;
+    order: 1;
+    display: flex;
     flex-direction: row;
+    align-items: baseline;
     width: 100%;
+    padding: inherit;
+    background-color: $defaultBackgroundColor;
+    border-radius: $defaultBorderRadius;
+    justify-content: space-between;
+    align-items: center;
  }
- .search-result-wrapper{
+ .search-bar input{
+   border: none;
+   background-color: inherit;
+ }
+ .search-bar input:focus{
+   outline: none;
+ }
+ .result-wrapper{
      height: fit-content;
      display: flex;
      flex-direction: column;
+     width: 100%;
     //  margin-top: 5px;
     //  margin-bottom: 5px;
     //  background-color: wheat;
     //  border-bottom: 2px solid black;
-     border-top: 2px solid black;
  }
  .search-results-wrapper{
-    width: 85%;
+    width: 100%;
     font-size: 12px;
     position: relative;
     // left: 0px;
+    top: 5px;
     margin-top: 0px;
     margin-bottom: 0px;
     margin-inline-start: 0px;
     padding-inline-start: 0px;
+    padding: inherit;
     order: 2;
-    border-collapse: collapse;
     overflow: hidden;
-    border: .5px solid black;
-    border-top: none;
+    border-radius: $defaultBorderRadius;
+    background-color: $defaultBackgroundColor;
+
  }
  .result-path{
      order: 3;
