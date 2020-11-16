@@ -3,7 +3,17 @@
     <div class= "tree-title" ref="treeTitle">
       {{title}}
     </div>
-    <search-bar :searchOnType="true" :exampleSearchTerm="'dir'" :searchFunction="function(searchKey){ return tree.traverseTree(tree.treeObject, tree.searchCheck , [], searchKey)}"></search-bar>
+    <search-bar style="color: black; background-color: white;"
+    :searchOnType="true"
+    :exampleSearchTerm="'dir'"
+    :searchFunction="function(searchKey){ return tree.traverseTree(tree.treeObject, tree.searchCheck , [], searchKey)}"
+    :onSearchResultClick="()=>{}"
+    :showSearchResults="true"
+    :buttonOrientationRight="true"
+    :placeHolderText="'Type to Search...'"
+    :darkSearchResultTheme="false"
+    >
+    </search-bar>
     <div class="tree-body" ref="treeBody">
       <ul class="tree" ref="tree">
         <node @node-clicked="clickedNode"
