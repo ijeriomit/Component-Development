@@ -1,9 +1,9 @@
 
 <template>
-    <div class="component-wrapper">
+    <div id="component-wrapper" class="component-wrapper">
         <div class="search-bar" :class="{shadow : inputFocused}">
-            <input   v-if="!searchOnType" :placeholder='placeHolderText' type='text' v-on:focus="inputFocused = true" v-on:focusout="inputFocused = false" v-on:keyup="search(searchTerm)" v-model="searchTerm"/>
-            <input  v-else type='text' :placeholder='placeHolderText' v-on:focus="inputFocused = true"  v-on:focusout="inputFocused = false" v-on:keyup.enter="search(searchTerm)" v-model="searchTerm"/>
+            <input v-if="searchOnType" type='text' :placeholder='placeHolderText' v-on:focus="inputFocused = true"  v-on:focusout="inputFocused = false" v-on:keyup.enter="search(searchTerm)" v-model="searchTerm"/>
+            <input  v-else :placeholder='placeHolderText' type='text' v-on:focus="inputFocused = true" v-on:focusout="inputFocused = false" v-on:keyup="search(searchTerm)" v-model="searchTerm"/>
             <font-awesome-icon v-if="searchResults.length === 0" class="search-button" @click="search(searchTerm)" title="click to search" :class="[buttonOrientationRight ? 'search-button-right' : 'search-button-left']" :icon="['fa', 'search']">
             </font-awesome-icon>
             <font-awesome-icon v-else class="search-button" @click="clearSearch()" title="click to clear" :class="[buttonOrientationRight ? 'search-button-right' : 'search-button-left']" :icon="['fa', 'times']"></font-awesome-icon>
@@ -192,120 +192,112 @@ $defaultBorderRadius: 20px;
 $defaultBoxShadow: 0px 10px 20px 0px rgba(200,200,200, .7);
 $defaultBackgroundColor: rgb(198, 198, 198);
 @import './scrollbar.scss';
-input{
-    width: 85%;
-}
-button{
-    width: 15%;
-}
-.search-button{
-  font-size: 16px;
-  padding-left: 5px;
-  padding-right: 5px;
-  cursor: pointer;
-}
- .component-wrapper{
-  display: flex;
-  align-items: baseline;
-  flex-flow: column;
-  width: 300px;
-  padding: 10px;
-  justify-content: space-around;
-  border-radius: $defaultBorderRadius;
-  color: white;
-  visibility: hidden;
-  background-color: $defaultBackgroundColor;
- }
 
- .shadow{
-  box-shadow: $defaultBoxShadow;
- }
- .search-button-right{
-  order: 1;
- }
- .search-button-left{
-  order: -1;
- }
- .search-bar{
-  order: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  width: 100%;
-  padding: inherit;
-  border-radius: inherit;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.25s ease-in-out;
-  visibility: visible;
-  background-color: inherit;
-  color: inherit;
+  input{
+      width: 85%;
+  }
+  .search-button{
+    font-size: 16px;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: pointer;
+  }
+  .component-wrapper{
+    display: flex;
+    align-items: baseline;
+    flex-flow: column;
+    width: 300px;
+    padding: 10px;
+    justify-content: space-around;
+    border-radius: $defaultBorderRadius;
+    color: white;
+    visibility: hidden;
+    background-color: $defaultBackgroundColor;
+  }
 
- }
- .search-bar input{
-  border: none;
-  background-color: inherit;
-  color: inherit;
- }
- .search-bar input:focus{
-  outline: none;
- }
- .result-wrapper{
-  height: 20%;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
- }
- .result-wrapper p b{
-   background-color: darkgray;
- }
-
- li:hover{
-   background-color: rgba(0,0,0,.5);
- }
-
- li{
-  cursor: pointer;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  background-color: #0000;
- }
-
- .search-results-wrapper{
-    width: calc(100% + 20px);
-    height: 150px;
-    font-size: 12px;
-    position: relative;
-    margin-top: 5px;
-    margin-bottom: 0px;
-    margin-inline-start: 0px;
-    padding-inline-start: 0px;
+  .shadow{
+    box-shadow: $defaultBoxShadow;
+  }
+  .search-button-right{
+    order: 1;
+  }
+  .search-button-left{
+    order: -1;
+  }
+  .component-wrapper > .search-bar{
+    order: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    width: 100%;
     padding: inherit;
-    padding-left: 0px;
-    padding-right: 0px;
-    order: 2;
-    overflow-y: scroll;
     border-radius: inherit;
-    opacity: .8;
-    transition: .25s ease-in-out;
-    list-style-type: none;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.25s ease-in-out;
     visibility: visible;
     background-color: inherit;
- }
- .result-path{
-     order: 3;
-     overflow: hidden;
-     font-style: italic;
- }
- .result-name{
-     order: 1;
-     overflow: hidden;
-     padding-bottom: 2px;
-     padding-top: 2px;
- }
+    color: inherit;
+
+  }
+  .search-bar input{
+    border: none;
+    background-color: inherit;
+    color: inherit;
+  }
+  .search-bar input:focus{
+    outline: none;
+  }
+  .result-wrapper{
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+  }
+  .result-wrapper p b{
+    background-color: darkgray;
+  }
+  li{
+    cursor: pointer;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .search-results-wrapper{
+      width: calc(100% + 20px);
+      height: 150px;
+      font-size: 12px;
+      position: relative;
+      margin-top: 5px;
+      margin-bottom: 0px;
+      margin-inline-start: 0px;
+      padding-inline-start: 0px;
+      padding: inherit;
+      padding-left: 0px;
+      padding-right: 0px;
+      order: 2;
+      overflow-y: scroll;
+      border-radius: inherit;
+      opacity: .8;
+      transition: .25s ease-in-out;
+      list-style-type: none;
+      visibility: visible;
+      background-color: inherit;
+  }
+  .result-path{
+      order: 3;
+      overflow: hidden;
+      font-style: italic;
+  }
+  .result-name{
+      order: 1;
+      overflow: hidden;
+      padding-bottom: 2px;
+      padding-top: 2px;
+  }
 
 </style>

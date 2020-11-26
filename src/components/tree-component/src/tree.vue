@@ -3,7 +3,7 @@
     <div class= "tree-title" ref="treeTitle">
       {{title}}
     </div>
-    <search-bar style="color: black; background-color: white;"
+    <search-bar class="search-button"
     :searchOnType="true"
     :exampleSearchTerm="'dir'"
     :searchFunction="function(searchKey){ return tree.traverseTree(tree.treeObject, tree.searchCheck , [], searchKey)}"
@@ -112,6 +112,11 @@ $text-color: black;
 $background-color: white;
 $border:2px solid $text-color;
 $font-size: 25px;
+
+.search-bar{
+  color: blue;
+  background-color: wheat;
+}
 .tree{
   border: none;
   align-self: flex-start;
